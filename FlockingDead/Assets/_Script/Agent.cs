@@ -17,11 +17,11 @@ public class Agent : MonoBehaviour
 
     //Agent type (set this in the inspector)
     [SerializeField]
-    AgentType AgentType = AgentType.Undefined;
+    AgentType agentType = AgentType.Undefined;
 
     void Awake()
     {
-        if(AgentType == AgentType.Undefined)
+        if(agentType == AgentType.Undefined)
         {
             Debug.LogErrorFormat("{0} Agent doesn't have it's agent type defined.", this.gameObject.name);
         }
@@ -30,8 +30,18 @@ public class Agent : MonoBehaviour
     void FixedUpdate()
     {
         //See
+        agentsInRange.Clear();
+        foreach(var agent in allAgentsRutimeSet.Items)
+        {
+            //ignore self
+            if (agent == this) continue;
+            //sqr magnitude is faster then magnitude
+            if (Vector3.SqrMagnitude(this.transform.position - agent.transform.position) < this.sightRange * this.sightRange)
+                this.agentsInRange.Add(agent);
+        }
 
         //Think
+
 
         //Act
 
