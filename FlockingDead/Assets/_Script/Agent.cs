@@ -6,25 +6,32 @@ using Random = UnityEngine.Random;
 
 public class Agent : MonoBehaviour
 {
+    public bool debugSensei = false;
     //flocking variables
-    [Range(-1,1)][SerializeField]
-    protected float cohesion = .5f, seperation = .5f, alignment = .5f, avoidance = .5f;
-    [SerializeField]
+    [SerializeField][Header("Flocking variables")]
     protected float speed = 1f;
+    [Range(-1,1)][SerializeField]
+    protected float cohesion = .5f, seperation = .5f, alignment = .5f, avoidance = .5f, nesting= .5f;
     [SerializeField]
     protected Vector3 directionVector = Vector3.zero;
+    protected Vector3 movementVector = Vector3.zero;
+    //Agent type (set this in the inspector)
+    [SerializeField]
+    protected AgentType agentType = AgentType.Undefined;
 
     //detection variables
     [SerializeField]
+    [Header("Detection variables")]
     protected float spaceRange = 1f;
     [SerializeField]
     protected float sightRange = 3f;
+    [SerializeField][Range(0.5f, 10f)]
+    protected float nestingDistance = 3f;
+    
     [SerializeField]
     protected AgentRuntimeSet allAgentsRutimeSet;
 
-    //Agent type (set this in the inspector)
-    [SerializeField]
-    AgentType agentType = AgentType.Undefined;
+    static readonly float boundary = 10;
 
     void Awake()
     {
@@ -33,8 +40,9 @@ public class Agent : MonoBehaviour
             Debug.LogErrorFormat("{0} Agent doesn't have it's agent type defined.", this.gameObject.name);
             Destroy(this.gameObject);
         }
-
+        //randomize starting position and starting movement direction
         directionVector = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+        this.transform.position = new Vector3(Random.Range(-boundary, boundary), this.transform.position.y, Random.Range(-boundary, boundary));
     }
 
     void FixedUpdate()
@@ -57,6 +65,7 @@ public class Agent : MonoBehaviour
         }
 
         //Act
+        CheckSpeed();
         Move(Time.fixedDeltaTime);
     }
 
@@ -65,6 +74,7 @@ public class Agent : MonoBehaviour
         float closestFound = float.MaxValue;
         Agent prey = null;
         //See
+
         foreach (var agent in allAgentsRutimeSet.Items)
         {
             if (agent.agentType != AgentType.Zombie)
@@ -83,6 +93,14 @@ public class Agent : MonoBehaviour
             // Move towards closest prey.
             directionVector += prey.transform.position - this.transform.position;
         }
+        else
+        {
+            //Nest
+            if (Vector3.SqrMagnitude(this.transform.position) > nestingDistance * nestingDistance)
+            {
+                directionVector += -this.transform.position.normalized * nesting;
+            }
+        }
     }
 
     protected void Flock()
@@ -92,6 +110,11 @@ public class Agent : MonoBehaviour
         float squaredSightRange = sightRange * sightRange;
         foreach (var agent in allAgentsRutimeSet.Items)
         {
+            //Nest
+            if (Vector3.SqrMagnitude(myPos) > nestingDistance * nestingDistance)
+            {
+                directionVector += -this.transform.position.normalized * nesting;
+            }
             //ignore self
             if (agent == this) continue;
             //sqr magnitude is faster then magnitude
@@ -100,10 +123,8 @@ public class Agent : MonoBehaviour
                 switch (agent.agentType)
                 {
                     case AgentType.Human:
-                        //Flock with other humans
+                        // Flock with other humans
                         {
-                            //Think
-                            //seperation
                             if (squaredDistance < spaceRange * spaceRange)
                             {
                                 // Create space. (seperation)
@@ -117,7 +138,7 @@ public class Agent : MonoBehaviour
                             if (squaredDistance < squaredSightRange)
                             {
                                 // Align movement. (Alignment)
-                                directionVector += agent.transform.position * alignment;
+                                directionVector += agent.directionVector * alignment;
                             }
                         }
                         break;
@@ -137,25 +158,41 @@ public class Agent : MonoBehaviour
 
     protected void Move(float deltaTime)
     {
-        directionVector.y = 0;
         //Set orientation of this agent to what the directionVector is.
-        this.transform.rotation = Quaternion.LookRotation(directionVector);
-        if(directionVector.magnitude > speed)
+        this.transform.rotation = Quaternion.LookRotation(directionVector.normalized);
+        this.transform.position += directionVector * deltaTime;
+    }
+
+    protected void CheckSpeed()
+    {
+        directionVector.y = 0;
+        float val = directionVector.magnitude;
+        if (val > speed)
         {
-            directionVector = directionVector.normalized;
+            directionVector = directionVector.normalized * speed;
         }
-        this.transform.position += directionVector * speed * deltaTime;
     }
 
     private void OnDrawGizmosSelected()
     {
+        //Draw the space seperation range
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(this.transform.position, spaceRange);
 
+        //Draw sight range
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(this.transform.position, sightRange);
 
+        //Draw the forward vector
         Gizmos.color = Color.magenta;
         Gizmos.DrawLine(this.transform.position, this.transform.position + this.transform.forward);
+
+        //Draw the boundry
+        Gizmos.color = Color.black;
+        Gizmos.DrawWireCube(Vector3.zero, new Vector3(boundary * 2f, 1f, boundary * 2f));
+
+        //Draw the nest
+        Gizmos.color = Color.grey;
+        Gizmos.DrawWireSphere(Vector3.zero, nestingDistance);
     }
 }
