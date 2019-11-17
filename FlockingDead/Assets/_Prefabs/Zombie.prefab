@@ -401,7 +401,6 @@ GameObject:
   - component: {fileID: 7035808874184001463}
   - component: {fileID: 5650980964006457724}
   - component: {fileID: 5650980964006457725}
-  - component: {fileID: 5650980964006457727}
   - component: {fileID: 5650980964006457726}
   m_Layer: 0
   m_Name: Zombie
@@ -455,28 +454,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c929f8e8523924e9c5b0992160641c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cohesion: 0.5
-  seperation: 0.5
-  alignment: 0.5
+  cohesion: 0.075
+  seperation: 0.25
+  alignment: 0.05
+  speed: 1
+  directionVector: {x: 0, y: 0, z: 0}
+  spaceRange: 1.5
   sightRange: 3
   allAgentsRutimeSet: {fileID: 11400000, guid: 6f5c567278c943b48b025f3babe106fe, type: 2}
   agentType: 1
---- !u!54 &5650980964006457727
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6340909104433837476}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 80
-  m_CollisionDetection: 0
 --- !u!136 &5650980964006457726
 CapsuleCollider:
   m_ObjectHideFlags: 0
