@@ -6,7 +6,6 @@ using Random = UnityEngine.Random;
 
 public class Agent : MonoBehaviour
 {
-    public bool debugSensei = false;
     //flocking variables
     [SerializeField][Header("Flocking variables")]
     protected float speed = 1f;
