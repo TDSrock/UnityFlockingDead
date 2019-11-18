@@ -59,7 +59,7 @@ public class Agent : MonoBehaviour
                 Destroy(this.gameObject);
                 break;
             default:
-                Debug.LogWarningFormat("{0} doesn't have a registered agentType, add behavior if intended. Enum found was: {1}", this.gameObject.name, this.agentType);
+                Debug.LogWarningFormat("{0} doesn't have a registered agentType, add behavior if intended. Enum found in FixedUpdate was: {1}", this.gameObject.name, this.agentType);
                 break;
         }
 
@@ -149,7 +149,9 @@ public class Agent : MonoBehaviour
                             directionVector += (myPos - agent.transform.position) *  avoidance;
                         }
                         break;
-
+                    default:
+                        Debug.LogWarningFormat("{0} doesn't have a registered agentType, add behavior if intended. Enum found in Flock was: {1}", agent.gameObject.name, this.agentType);
+                        break;
                 }
             }
         }
