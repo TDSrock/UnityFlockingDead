@@ -145,7 +145,7 @@ public class Agent : MonoBehaviour
                         //Flee from any zombies
                         if (squaredDistance < squaredSightRange)
                         {
-                            // Avoid zombies.
+                            // Avoid zombies. (Avoidance)
                             directionVector += (myPos - agent.transform.position) *  avoidance;
                         }
                         break;
