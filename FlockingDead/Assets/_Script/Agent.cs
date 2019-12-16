@@ -74,23 +74,19 @@ public class Agent : MonoBehaviour
         Agent prey = null;
         //See
 
-        foreach (var agent in allAgentsRutimeSet.Items)
-        {
-            if (agent.agentType != AgentType.Zombie)
-            {
-                float distance = Vector3.SqrMagnitude(this.transform.position - agent.transform.position);
-                if (distance < sightRange * sightRange && distance < closestFound)
-                {
-                    closestFound = distance;
-                    prey = agent;
-                }
-            }
-        }
+        /** Opdracht 5 
+         * Aan de Hunt methode in Agent.cs voeg een manier toe om de dichtstbijzijnde 
+         * NIET zombie te vinden die
+         * wel binnen de sightrange valt.
+         **/
+
+
         //Think
         if (prey != null)
         {
-            // Move towards closest prey.
-            directionVector += prey.transform.position - this.transform.position;
+            /** Opdracht 5
+             * Maak het think stukje af zodat de zombie ook egt zijn prooi zal na jagen
+             **/
         }
         else
         {
@@ -126,18 +122,30 @@ public class Agent : MonoBehaviour
                         {
                             if (squaredDistance < spaceRange * spaceRange)
                             {
-                                // Create space. (seperation)
-                                directionVector += (myPos - agent.transform.position) * seperation;
+                                /** Opdracht 2
+                                 * Maak de seperation code in Agent.cs af.
+                                 * 
+                                 * Gebruik hiervoor het al bestaande seperation variabel. 
+                                 * Implementeer dit in de Flock methode.
+                                 **/
                             }
                             else if (squaredDistance < squaredSightRange)
                             {
-                                // Flock together. (Cohesion)
-                                directionVector += (agent.transform.position - myPos) * cohesion;
+                                /** Opdracht 1
+                                 * Maak de cohesion code in Agent.cs af.
+                                 * 
+                                 * Gebruik hiervoor het al bestaande cohesion variabel. 
+                                 * Implementeer dit in de Flock methode.
+                                 **/
                             }
                             if (squaredDistance < squaredSightRange)
                             {
-                                // Align movement. (Alignment)
-                                directionVector += agent.directionVector * alignment;
+                                /** Opdracht 3
+                                 * Maak de alignment code in Agent.cs af.
+                                 * 
+                                 * Gebruik hiervoor het al bestaande alignment variabel. 
+                                 * Implementeer dit in de Flock methode.
+                                 **/
                             }
                         }
                         break;
@@ -145,8 +153,12 @@ public class Agent : MonoBehaviour
                         //Flee from any zombies
                         if (squaredDistance < squaredSightRange)
                         {
-                            // Avoid zombies. (Avoidance)
-                            directionVector += (myPos - agent.transform.position) *  avoidance;
+                            /** Opdracht 4
+                             * Maak de avoidance code in Agent.cs af.
+                             * 
+                             * Gebruik hiervoor het al bestaande avoidance variabel. 
+                             * Implementeer dit in de Flock methode.
+                             **/
                         }
                         break;
                     default:
